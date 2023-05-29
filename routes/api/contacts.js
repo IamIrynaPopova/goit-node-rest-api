@@ -27,7 +27,16 @@ router.get("/:contactId", async (req, res, next) => {
 });
 
 router.post("/", async (req, res, next) => {
-  res.json({ message: "template message" });
+  try {
+    if (!req.body.name || !req.body.email || !req.body.phone) {
+      res.status(400).json({ message: "missing required name field" });
+      return;
+    }
+    const result = await contactsService.addContact(req.body);
+    res.status(201).json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 });
 
 router.delete("/:contactId", async (req, res, next) => {
