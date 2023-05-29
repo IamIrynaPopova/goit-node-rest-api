@@ -7,7 +7,6 @@ const contactsService = require("../../models/contacts");
 router.get("/", async (req, res, next) => {
   try {
     const result = await contactsService.listContacts();
-    console.log(Array.isArray(result));
     res.json(result);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -40,7 +39,16 @@ router.post("/", async (req, res, next) => {
 });
 
 router.delete("/:contactId", async (req, res, next) => {
-  res.json({ message: "template message" });
+  try {
+    const { contactId } = req.params;
+    const result = await contactsService.removeContact(contactId);
+    if (result) {
+      res.status(200).json({ message: "contact deleted" });
+    }
+    if (result === null) res.status(404).json({ message: "Not found" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 });
 
 router.put("/:contactId", async (req, res, next) => {
