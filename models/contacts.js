@@ -40,7 +40,19 @@ const addContact = async (body) => {
   return newContact;
 };
 
-const updateContact = async (contactId, body) => {};
+const updateContact = async (contactId, body) => {
+    const data = await listContacts();
+  const indexUpdateContact = await data.findIndex(
+    (contact) => contact.id === contactId
+  );
+  if (indexUpdateContact !== -1) {
+    data.splice(indexUpdateContact, 1, body);
+    await fs.writeFile(contactsPath, JSON.stringify(data));
+    return body;
+  } else {
+    return null;
+  }
+};
 
 module.exports = {
   listContacts,
