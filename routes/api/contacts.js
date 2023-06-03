@@ -1,74 +1,15 @@
 const express = require("express");
 const router = express.Router();
-const contactsService = require("../../models/contacts");
-const contactsSchema = require("../../schemas/contacts");
-const { HttpError } = require("../../helpers");
+const contactController=require("../../controllers/contact-controllers");
 
-router.get("/", async (req, res, next) => {
-  try {
-    const result = await contactsService.listContacts();
-    res.json(result);
-  } catch (error) {
-    next(error);
-  }
-});
+router.get("/", contactController.getAllContacts);
 
-router.get("/:contactId", async (req, res, next) => {
-  try {
-    const { contactId } = req.params;
-    const result = await contactsService.getContactById(contactId);
-    if (result === null) {
-      throw HttpError(404, "Not found");
-    }
-    res.json(result);
-  } catch (error) {
-    next(error);
-  }
-});
+router.get("/:contactId", contactController.getContactById);
 
-router.post("/", async (req, res, next) => {
-  try {
-    const { error } = contactsSchema.validate(req.body);
-    if (error) {
-      throw HttpError(400, "missing required name field");
-    }
-    const result = await contactsService.addContact(req.body);
-    res.status(201).json(result);
-  } catch (error) {
-    next(error);
-  }
-});
+router.post("/", contactController.createContact);
 
-router.delete("/:contactId", async (req, res, next) => {
-  try {
-    const { contactId } = req.params;
-    const result = await contactsService.removeContact(contactId);
-    if (result) {
-      res.status(200).json({ message: "contact deleted" });
-    }
-    if (result === null) next();
-  } catch (error) {
-    next(error);
-  }
-});
+router.delete("/:contactId", contactController.deleteContactById);
 
-router.put("/:contactId", async (req, res, next) => {
-  try {
-    const { contactId } = req.params;
-    const body = req.body;
-    const { error } = contactsSchema.validate(body);
-    if (error) {
-      throw HttpError(400, "missing fields");
-    }
-    const result = await contactsService.updateContact(contactId, body);
-    if (result) {
-      res.status(200).json(result);
-    } else {
-      next();
-    }
-  } catch (error) {
-    next(error);
-  }
-});
+router.put("/:contactId", contactController.updateContactById);
 
 module.exports = router;
