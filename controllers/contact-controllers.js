@@ -50,7 +50,7 @@ const updateContactById = async (req, res, next) => {
     const { contactId } = req.params;
     const result = await contactsService.updateContact(contactId, req.body);
     if (result) {
-      res.status(200).json(result);
+      res.status(200).json({ id: contactId, ...result });
     } else {
       next();
     }
