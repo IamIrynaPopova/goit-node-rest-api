@@ -14,4 +14,4 @@ const contactsSchema = Joi.object({
   phone: Joi.string().required(),
 });
 
-module.exports = contactsSchema;
+module.exports = { contactsSchema };
