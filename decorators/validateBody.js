@@ -10,7 +10,9 @@ const validateBodyOnPut = (schema) => {
     }
 
     if (error) {
-      next(HttpError(400, `missing required ${error.message} field`));
+      next(
+        HttpError(400, `missing required ${error.message.split('"')[1]} field`)
+      );
     } else next();
   };
   return func;
@@ -19,7 +21,9 @@ const validateBodyOnPost = (schema) => {
   const func = (req, res, next) => {
     const { error } = schema.validate(req.body);
     if (error) {
-      next(HttpError(400, `missing required ${error.message} field`));
+      next(
+        HttpError(400, `missing required ${error.message.split('"')[1]} field`)
+      );
     } else next();
   };
   return func;
