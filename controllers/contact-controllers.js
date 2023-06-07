@@ -1,36 +1,39 @@
+const Contact = require("../models/contacts");
 const contactsService = require("../models/contacts");
 const { HttpError } = require("../helpers");
 
 const getAllContacts = async (req, res, next) => {
   try {
-    const result = await contactsService.listContacts();
+    const result = await Contact.find();
     res.json(result);
   } catch (error) {
     next(error);
   }
 };
 
-// const getContactById = async (req, res, next) => {
-//   try {
-//     const { contactId } = req.params;
-//     const result = await contactsService.getContactById(contactId);
-//     if (result === null) {
-//       throw HttpError(404, "Not found");
-//     }
-//     res.json(result);
-//   } catch (error) {
-//     next(error);
-//   }
-// };
+const getContactById = async (req, res, next) => {
+  try {
+    const { contactId } = req.params;
+    const result = await Contact.findOne({
+      _id: contactId,
+    });
+    if (result === null) {
+      throw HttpError(404, "Not found");
+    }
+    res.json(result);
+  } catch (error) {
+    next(error);
+  }
+};
 
-// const createContact = async (req, res, next) => {
-//   try {
-//     const result = await contactsService.addContact(req.body);
-//     res.status(201).json(result);
-//   } catch (error) {
-//     next(error);
-//   }
-// };
+const createContact = async (req, res, next) => {
+  try {
+    const result = await Contact.create(req.body);
+    res.status(201).json(result);
+  } catch (error) {
+    next(error);
+  }
+};
 
 // const deleteContactById = async (req, res, next) => {
 //   try {
@@ -61,8 +64,8 @@ const getAllContacts = async (req, res, next) => {
 
 module.exports = {
   getAllContacts,
-  // getContactById,
-  // createContact,
+  getContactById,
+  createContact,
   // deleteContactById,
   // updateContactById,
 };

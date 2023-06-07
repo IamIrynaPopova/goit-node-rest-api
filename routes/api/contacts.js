@@ -6,13 +6,13 @@ const validate = require("../../decorators");
 
 router.get("/", contactController.getAllContacts);
 
-// router.get("/:contactId", contactController.getContactById);
+router.get("/:contactId", contactController.getContactById);
 
-// router.post(
-//   "/",
-//   validate.validateBodyOnPost(schemas.contactsSchema),
-//   contactController.createContact
-// );
+router.post(
+  "/",
+  validate.validateBodyOnPost(schemas.contactsSchema),
+  contactController.createContact
+);
 
 // router.delete("/:contactId", contactController.deleteContactById);
 
