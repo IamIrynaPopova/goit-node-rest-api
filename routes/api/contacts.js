@@ -6,20 +6,20 @@ const validate = require("../../decorators");
 
 router.get("/", contactController.getAllContacts);
 
-router.get("/:contactId", contactController.getContactById);
+// router.get("/:contactId", contactController.getContactById);
 
-router.post(
-  "/",
-  validate.validateBodyOnPost(schemas.contactsSchema),
-  contactController.createContact
-);
+// router.post(
+//   "/",
+//   validate.validateBodyOnPost(schemas.contactsSchema),
+//   contactController.createContact
+// );
 
-router.delete("/:contactId", contactController.deleteContactById);
+// router.delete("/:contactId", contactController.deleteContactById);
 
-router.put(
-  "/:contactId",
-  validate.validateBodyOnPut(schemas.contactsSchema),
-  contactController.updateContactById
-);
+// router.put(
+//   "/:contactId",
+//   validate.validateBodyOnPut(schemas.contactsSchema),
+//   contactController.updateContactById
+// );
 
 module.exports = router;
