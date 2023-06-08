@@ -13,8 +13,6 @@ const getAllContacts = async (req, res, next) => {
 const getContactById = async (req, res, next) => {
   try {
     const { contactId } = req.params;
-    console.log(contactId);
-    console.log(req.params);
     const result = await Contact.findById(contactId);
     if (result === null) {
       throw HttpError(404, "Not found");
@@ -56,7 +54,25 @@ const updateContactById = async (req, res, next) => {
       { new: true }
     );
     if (result) {
-      res.status(200).json(result );
+      res.status(200).json(result);
+    } else {
+      next();
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+const updateStatusContact = async (req, res, next) => {
+  try {
+    const { contactId } = req.params;
+    const result = await Contact.findOneAndUpdate(
+      { _id: contactId },
+      req.body,
+      { new: true }
+    );
+    if (result) {
+      res.status(200).json(result);
     } else {
       next();
     }
@@ -71,4 +87,5 @@ module.exports = {
   createContact,
   deleteContactById,
   updateContactById,
+  updateStatusContact,
 };
