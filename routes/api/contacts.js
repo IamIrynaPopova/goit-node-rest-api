@@ -3,10 +3,11 @@ const router = express.Router();
 const contactController = require("../../controllers/contact-controllers");
 const schemas = require("../../schemas/contacts");
 const validate = require("../../decorators");
+const {isValidId}=require("../../middlewares");
 
 router.get("/", contactController.getAllContacts);
 
-router.get("/:contactId", contactController.getContactById);
+router.get("/:contactId", isValidId, contactController.getContactById);
 
 router.post(
   "/",
@@ -14,12 +15,12 @@ router.post(
   contactController.createContact
 );
 
-// router.delete("/:contactId", contactController.deleteContactById);
+router.delete("/:contactId",isValidId, contactController.deleteContactById);
 
-// router.put(
-//   "/:contactId",
-//   validate.validateBodyOnPut(schemas.contactsSchema),
-//   contactController.updateContactById
-// );
+router.put(
+  "/:contactId",isValidId,
+  validate.validateBodyOnPut(schemas.contactsSchema),
+  contactController.updateContactById
+);
 
 module.exports = router;
