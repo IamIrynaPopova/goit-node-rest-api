@@ -40,4 +40,19 @@ const validateBodyOnPatch = (schema) => {
   return func;
 };
 
-module.exports = { validateBodyOnPut, validateBodyOnPost, validateBodyOnPatch };
+const validateBodyRegisterOnPost = (schema) => {
+  const func = (req, res, next) => {
+    const { error } = schema.validate(req.body);
+    if (error) {
+      next(HttpError(400, "Bad Request"));
+    } else next();
+  };
+  return func;
+};
+
+module.exports = {
+  validateBodyOnPut,
+  validateBodyOnPost,
+  validateBodyOnPatch,
+  validateBodyRegisterOnPost,
+};
