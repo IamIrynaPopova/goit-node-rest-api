@@ -17,6 +17,7 @@ const validateBodyOnPut = (schema) => {
   };
   return func;
 };
+
 const validateBodyOnPost = (schema) => {
   const func = (req, res, next) => {
     const { error } = schema.validate(req.body);
@@ -29,4 +30,14 @@ const validateBodyOnPost = (schema) => {
   return func;
 };
 
-module.exports = { validateBodyOnPut, validateBodyOnPost };
+const validateBodyOnPatch = (schema) => {
+  const func = (req, res, next) => {
+    const { error } = schema.validate(req.body);
+    if (error) {
+      next(HttpError(400, "missing field favorite"));
+    } else next();
+  };
+  return func;
+};
+
+module.exports = { validateBodyOnPut, validateBodyOnPost, validateBodyOnPatch };
