@@ -1,9 +1,8 @@
-console.log("Continue");
 const express = require("express");
 const logger = require("morgan");
 const cors = require("cors");
 require("dotenv").config();
-const bcrypt = require("bcrypt");
+
 
 const contactsRouter = require("./routes/api/contacts");
 const authRouter = require("./routes/api/auth");
