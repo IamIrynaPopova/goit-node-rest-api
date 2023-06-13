@@ -10,4 +10,10 @@ router.post(
   userControllers.register
 );
 
+router.post(
+  "/users/login",
+  validate.validateBodyRegisterOnPost(schemas.usersLoginSchema),
+  userControllers.login
+);
+
 module.exports = router;
