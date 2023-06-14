@@ -45,7 +45,13 @@ const login = async (req, res, next) => {
   }
 };
 
+const getCurrentUser = async (req, res) => {
+  const { email, subscription } = req.user;
+  res.json({ email, subscription });
+};
+
 module.exports = {
   register,
   login,
+  getCurrentUser,
 };
