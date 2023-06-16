@@ -14,7 +14,9 @@ const register = async (req, res, next) => {
     }
     const hashPassword = await bcrypt.hash(password, 10);
     const newUser = await User.create({ ...req.body, password: hashPassword });
-    res.status(201).json({ email: newUser.email, password: newUser.password });
+    res
+      .status(201)
+      .json({ user: { email: newUser.email, subscription: "starter" } });
   } catch (error) {
     next(error);
   }
@@ -25,11 +27,11 @@ const login = async (req, res, next) => {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
     if (!user) {
-      throw HttpError(401, "Email is wrong");
+      throw HttpError(401, "Email or password is wrong");
     }
     const passwordCompare = await bcrypt.compare(password, user.password);
     if (!passwordCompare) {
-      throw HttpError(401, " password is wrong");
+      throw HttpError(401, "Email or password is wrong");
     }
     const { _id: id } = user;
     const payload = { id };
@@ -49,7 +51,7 @@ const login = async (req, res, next) => {
 
 const logout = async (req, res) => {
   const { _id } = req.user;
-  await User.findByIdAndUpdate(_id, {token:""});
+  await User.findByIdAndUpdate(_id, { token: "" });
   res.status(204).json({ message: "No Content" });
 };
 

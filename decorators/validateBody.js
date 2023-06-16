@@ -43,8 +43,9 @@ const validateBodyOnPatch = (schema) => {
 const validateBodyRegisterOnPost = (schema) => {
   const func = (req, res, next) => {
     const { error } = schema.validate(req.body);
+    const errorMessage = error.details[0].message.split('"').join("");
     if (error) {
-      next(HttpError(400, "Bad Request"));
+      next(HttpError(400, errorMessage));
     } else next();
   };
   return func;
