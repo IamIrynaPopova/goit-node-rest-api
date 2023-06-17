@@ -12,7 +12,8 @@ const contactsSchema = Joi.object({
     .required(),
 
   phone: Joi.string().required(),
-  favorite:Joi.boolean()
+  favorite: Joi.boolean()
+  
 });
 
 const contactUpdateFavoriteSchema = Joi.object({
