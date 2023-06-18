@@ -43,9 +43,8 @@ const validateBodyOnPatch = (schema) => {
 const validateBodyRegisterOnPost = (schema) => {
   const func = (req, res, next) => {
     const { error } = schema.validate(req.body);
-    const errorMessage = error.details[0].message.split('"').join("");
     if (error) {
-      next(HttpError(400, errorMessage));
+      next(HttpError(400, error.message.split('"').join("")));
     } else next();
   };
   return func;
