@@ -15,7 +15,11 @@ const register = async (req, res, next) => {
     }
     const hashPassword = await bcrypt.hash(password, 10);
     const avatar = await gravatar.url(email);
-    const newUser = await User.create({ ...req.body, password: hashPassword,avatar});
+    const newUser = await User.create({
+      ...req.body,
+      password: hashPassword,
+      avatarURL: avatar,
+    });
     res.status(201).json({
       user: {
         email: newUser.email,
@@ -66,9 +70,29 @@ const getCurrentUser = async (req, res) => {
   res.json({ email, subscription });
 };
 
+const updateAvatar = async (req, res, next) => {
+  try {
+    const { _id } = req.user;
+    const { filename: avatar } = req.file;
+    const result = await User.findOneAndUpdate(
+      _id,
+      { avatarURL: avatar },
+      { new: true }
+    );
+    if (result) {
+      res.status(200).json({ avatarURL: avatar });
+    } else {
+      next();
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   register,
   login,
   getCurrentUser,
   logout,
+  updateAvatar,
 };
