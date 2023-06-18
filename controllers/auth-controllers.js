@@ -4,6 +4,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const { SECRET_KEY } = process.env;
+const gravatar = require("gravatar");
 
 const register = async (req, res, next) => {
   try {
@@ -13,10 +14,15 @@ const register = async (req, res, next) => {
       throw HttpError(409, "Email in use");
     }
     const hashPassword = await bcrypt.hash(password, 10);
-    const newUser = await User.create({ ...req.body, password: hashPassword });
-    res
-      .status(201)
-      .json({ user: { email: newUser.email, subscription: "starter" } });
+    const avatar = await gravatar.url(email);
+    const newUser = await User.create({ ...req.body, password: hashPassword,avatar});
+    res.status(201).json({
+      user: {
+        email: newUser.email,
+        subscription: "starter",
+        avatarURL: avatar,
+      },
+    });
   } catch (error) {
     next(error);
   }
