@@ -83,14 +83,13 @@ const updateAvatar = async (req, res, next) => {
     await Jimp.read(newPath).then((image) => {
       return image.resize(250, 250).write(newPath);
     });
-    const URL = `http://localhost:${PORT}/avatars/`;
     const result = await User.findOneAndUpdate(
       _id,
-      { avatarURL: URL + filename },
+      { avatarURL: "/avatars/" + filename },
       { new: true }
     );
     if (result) {
-      res.status(200).json({ avatarURL: URL + filename });
+      res.status(200).json({ avatarURL: "/avatars/" + filename });
     } else {
       next();
     }
