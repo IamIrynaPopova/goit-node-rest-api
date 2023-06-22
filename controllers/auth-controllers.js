@@ -3,7 +3,11 @@ const { HttpError } = require("../helpers");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
-const { SECRET_KEY } = process.env;
+const { SECRET_KEY, PORT } = process.env;
+const gravatar = require("gravatar");
+const fs = require("fs/promises");
+const path = require("path");
+const Jimp = require("jimp");
 
 const register = async (req, res, next) => {
   try {
@@ -13,10 +17,19 @@ const register = async (req, res, next) => {
       throw HttpError(409, "Email in use");
     }
     const hashPassword = await bcrypt.hash(password, 10);
-    const newUser = await User.create({ ...req.body, password: hashPassword });
-    res
-      .status(201)
-      .json({ user: { email: newUser.email, subscription: "starter" } });
+    const avatar = await gravatar.url(email);
+    const newUser = await User.create({
+      ...req.body,
+      password: hashPassword,
+      avatarURL: avatar,
+    });
+    res.status(201).json({
+      user: {
+        email: newUser.email,
+        subscription: "starter",
+        avatarURL: avatar,
+      },
+    });
   } catch (error) {
     next(error);
   }
@@ -60,9 +73,35 @@ const getCurrentUser = async (req, res) => {
   res.json({ email, subscription });
 };
 
+const updateAvatar = async (req, res, next) => {
+  try {
+    const { _id } = req.user;
+    const { filename, path: oldPath } = req.file;
+    const publicDir = path.resolve("public/avatars");
+    const newPath = path.join(publicDir, filename);
+    await fs.rename(oldPath, newPath);
+    await Jimp.read(newPath).then((image) => {
+      return image.resize(250, 250).write(newPath);
+    });
+    const result = await User.findOneAndUpdate(
+      _id,
+      { avatarURL: "/avatars/" + filename },
+      { new: true }
+    );
+    if (result) {
+      res.status(200).json({ avatarURL: "/avatars/" + filename });
+    } else {
+      next();
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   register,
   login,
   getCurrentUser,
   logout,
+  updateAvatar,
 };
