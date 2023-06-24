@@ -1,13 +1,14 @@
 const User = require("../models/users");
-const { HttpError } = require("../helpers");
+const { HttpError, sendEmail } = require("../helpers");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
-const { SECRET_KEY, PORT } = process.env;
+const { SECRET_KEY, BASE_URL } = process.env;
 const gravatar = require("gravatar");
 const fs = require("fs/promises");
 const path = require("path");
 const Jimp = require("jimp");
+const { v4: uuidv4 } = require("uuid");
 
 const register = async (req, res, next) => {
   try {
@@ -17,12 +18,20 @@ const register = async (req, res, next) => {
       throw HttpError(409, "Email in use");
     }
     const hashPassword = await bcrypt.hash(password, 10);
+    const verificationToken = uuidv4();
     const avatar = await gravatar.url(email);
     const newUser = await User.create({
       ...req.body,
       password: hashPassword,
+      verificationToken,
       avatarURL: avatar,
     });
+    const verifyEmail = {
+      to: email,
+      subject: "Verify email",
+      html: `<a target="_blank" href="${BASE_URL}/users/verify/:${verificationToken}">Verify email</a>`,
+    };
+    await sendEmail(verifyEmail);
     res.status(201).json({
       user: {
         email: newUser.email,
@@ -42,6 +51,10 @@ const login = async (req, res, next) => {
     if (!user) {
       throw HttpError(401, "Email or password is wrong");
     }
+     if (!user.verify) {
+       throw HttpError(401);
+     }
+
     const passwordCompare = await bcrypt.compare(password, user.password);
     if (!passwordCompare) {
       throw HttpError(401, "Email or password is wrong");
