@@ -17,7 +17,7 @@ router.get(
 
 router.post(
   "/verify",
-  validate.validateBodyRegisterOnPost(schemas.usersEmailSchema),
+  // validate.validateBodyRegisterOnPost(schemas.usersEmailSchema),
   userControllers.resendVerify
 );
 

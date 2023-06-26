@@ -1,7 +1,6 @@
-
 const HttpError = (status, message) => {
   const error = new Error(message);
-  error.status = status;
+  error.status = status || 500;
   return error;
 };
 
