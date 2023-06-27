@@ -10,6 +10,17 @@ router.post(
   userControllers.register
 );
 
+router.get(
+  "/verify/:verificationToken",
+    userControllers.verify
+);
+
+router.post(
+  "/verify",
+  // validate.validateBodyRegisterOnPost(schemas.usersEmailSchema),
+  userControllers.resendVerify
+);
+
 router.post(
   "/login",
   validate.validateBodyRegisterOnPost(schemas.usersLoginSchema),
